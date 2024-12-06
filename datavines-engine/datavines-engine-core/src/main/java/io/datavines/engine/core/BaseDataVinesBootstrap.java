@@ -75,7 +75,7 @@ public abstract class BaseDataVinesBootstrap {
         if (execution == null) {
             throw new Exception("can not create execution , please check the config");
         }
-
+        System.out.println("test");
         execution.execute(sources, transforms, sinks);
     }
 

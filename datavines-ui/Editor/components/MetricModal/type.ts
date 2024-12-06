@@ -44,6 +44,7 @@ export type TParameterItem = {
 
 export type TEngineParameter = {
     programType:string, // JAVA
+    masterUrl:string,
     deployMode:string,
     driverCores: number,
     driverMemory: string,

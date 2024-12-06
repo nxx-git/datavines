@@ -73,7 +73,7 @@ public class SqlUtils {
     }
 
     public static ListWithQueryColumn queryForPage(JdbcTemplate jdbcTemplate,
-                                                   String sql, int limit, int pageNumber, int pageSize) {
+                                                   String sql, int limit, int pageNumber, int pageSize, String dataType) {
 
         if (pageNumber < 1 && pageSize < 1) {
              return query(jdbcTemplate,sql,limit);
@@ -93,7 +93,12 @@ public class SqlUtils {
         Object countResult = jdbcTemplate.queryForList("select count(1) from ("+ sql+") tmp", Object.class);
         totalCount = Integer.parseInt(String.valueOf(((List) countResult).get(0)));
 
-        sql = sql + " LIMIT " + startRow + ", " + pageSize;
+        if (dataType.equals("postgresql")) {
+            sql = sql + " LIMIT " + pageSize + " OFFSET " + startRow;
+        }
+        else{
+            sql = sql + " LIMIT " + startRow + ", " + pageSize;
+        }
         ListWithQueryColumn result = query(jdbcTemplate,sql,limit);
         result.setPageNumber(pageNumber);
         result.setPageSize(pageSize);

@@ -58,7 +58,7 @@ public abstract class BaseJdbcExecutor implements Executor, IJdbcDataSourceInfo 
         }
 
         builder.result(SqlUtils.queryForPage(jdbcTemplate, sql, param.getLimit(),
-                param.getPageNumber(), param.getPageSize()));
+                param.getPageNumber(), param.getPageSize(), param.getType()));
 
         return builder.build();
     }
@@ -79,7 +79,7 @@ public abstract class BaseJdbcExecutor implements Executor, IJdbcDataSourceInfo 
         }
 
         builder.result(SqlUtils.queryForPage(jdbcTemplate, sql, param.getLimit(),
-                param.getPageNumber(), param.getPageSize()));
+                param.getPageNumber(), param.getPageSize(), param.getType()));
 
         return builder.build();
     }

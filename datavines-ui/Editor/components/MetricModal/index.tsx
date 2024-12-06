@@ -70,7 +70,7 @@ export const MetricConfig = (props: InnerProps) => {
                     if (values.engineType === 'spark' || values.engineType === 'livy') {
                         params.engineParameter = JSON.stringify({
                             programType: 'JAVA',
-                            ...pickProps(values, ['deployMode', 'driverCores', 'driverMemory', 'numExecutors', 'executorMemory', 'executorCores', 'others']),
+                            ...pickProps(values, ['deployMode', 'masterUrl', 'driverCores', 'driverMemory', 'numExecutors', 'executorMemory', 'executorCores', 'others']),
                         });
                     }
                     if (datasourceReducer.modeType === 'comparison') {

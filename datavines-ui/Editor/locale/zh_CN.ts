@@ -30,6 +30,7 @@ export default {
     editor_dv_metric_select_table: '请选择表!',
     editor_dv_metric_select_column: '请选择列!',
     dv_metric_actuator_deploy_mode: '部署方式',
+    dv_metric_actuator_master: 'Master',
     dv_metric_actuator_driver_cores: 'Driver核心数',
     dv_metric_actuator_driver_memory: 'Driver内存数',
     dv_metric_actuator_executor_numbers: 'Executor数量',

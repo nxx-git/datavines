@@ -35,6 +35,7 @@ const Index = ({ form, detail }: InnerProps) => {
                 parameter = JSON.parse(engineParameter);
             }
             form.setFieldsValue({
+                masterUrl: parameter.masterUrl ?? '',
                 deployMode: parameter.deployMode ?? 'cluster',
                 driverCores: parameter.driverCores ?? 1,
                 driverMemory: parameter.driverMemory ?? '512M',
@@ -64,7 +65,30 @@ const Index = ({ form, detail }: InnerProps) => {
                     <Radio value="cluster">cluster</Radio>
                     <Radio value="client">client</Radio>
                     <Radio value="local">local</Radio>
+                    <Radio value="master">master</Radio>
                 </Radio.Group>
+            </Form.Item>
+            <Form.Item noStyle dependencies={['deployMode']}>
+                {() => {
+                    const value = form.getFieldValue('deployMode');
+                    if (value === 'cluster' || value === 'client' || value === 'local') {
+                        return null;
+                    }
+                    return (
+                        <Row gutter={30}>
+                            <Col span={12}>
+                                <Form.Item
+                                    {...layoutActuatorItem}
+                                    label={intl.formatMessage({ id: 'dv_metric_actuator_master' })}
+                                    name="masterUrl"
+                                    rules={[...requiredRule]}
+                                >
+                                    <Input autoComplete="off" allowClear />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    );
+                }}
             </Form.Item>
             <Row gutter={30}>
                 <Col span={12}>

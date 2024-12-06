@@ -34,6 +34,11 @@ public class SparkParameters {
     private String deployMode;
 
     /**
+     * deploy mode
+     */
+    private String masterUrl;
+
+    /**
      * arguments
      */
     private String mainArgs;
@@ -115,6 +120,9 @@ public class SparkParameters {
     public void setDeployMode(String deployMode) {
         this.deployMode = deployMode;
     }
+
+    public String getMasterUrl() { return masterUrl; }
+    public void setMasterUrl(String masterUrl) { this.masterUrl = masterUrl; }
 
     public String getMainArgs() {
         return mainArgs;

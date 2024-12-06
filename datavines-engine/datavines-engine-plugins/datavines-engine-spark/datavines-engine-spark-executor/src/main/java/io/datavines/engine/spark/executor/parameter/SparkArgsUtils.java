@@ -28,6 +28,8 @@ public class SparkArgsUtils {
 
     private static final String SPARK_LOCAL = "local";
 
+    private static final String SPARK_MASTER = "master";
+
     private static final String SPARK_ON_YARN = "yarn";
 
     private SparkArgsUtils() {
@@ -46,10 +48,18 @@ public class SparkArgsUtils {
 
         String deployMode = StringUtils.isNotEmpty(param.getDeployMode()) ? param.getDeployMode() : SPARK_CLUSTER;
         if (!SPARK_LOCAL.equals(deployMode)) {
-            args.add(SPARK_ON_YARN);
-            args.add(SparkConstants.DEPLOY_MODE);
+            if (SPARK_MASTER.equals(deployMode)) {
+                args.add(param.getMasterUrl());
+            }
+            else {
+                args.add(SPARK_ON_YARN);
+                args.add(SparkConstants.DEPLOY_MODE);
+                args.add(deployMode);
+            }
         }
-        args.add(deployMode);
+        else {
+            args.add(deployMode);
+        }
 
         ProgramType programType = param.getProgramType();
         String mainClass = param.getMainClass();

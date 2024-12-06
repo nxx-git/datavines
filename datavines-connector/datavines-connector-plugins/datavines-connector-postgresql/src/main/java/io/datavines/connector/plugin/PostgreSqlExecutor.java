@@ -30,4 +30,6 @@ public class PostgreSqlExecutor extends BaseJdbcExecutor {
     public BaseJdbcDataSourceInfo getDatasourceInfo(JdbcConnectionInfo jdbcConnectionInfo) {
         return new PostgreSqlDataSourceInfo(jdbcConnectionInfo);
     }
+
+
 }

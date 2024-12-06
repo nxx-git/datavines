@@ -29,6 +29,7 @@ export default {
     editor_dv_metric_select_databases: 'Please select databases!',
     editor_dv_metric_select_table: 'Please select table!',
     editor_dv_metric_select_column: 'Please select column!',
+    dv_metric_actuator_master: 'Master',
     dv_metric_actuator_driver_cores: 'Driver cores',
     dv_metric_actuator_deploy_mode: 'Deployment mode',
     dv_metric_actuator_driver_memory: 'Driver amount of memory',

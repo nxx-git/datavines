@@ -16,6 +16,8 @@
  */
 package io.datavines.connector.plugin;
 
+import io.datavines.common.utils.StringUtils;
+
 import java.util.Map;
 
 import static io.datavines.common.ConfigConstants.*;
@@ -35,5 +37,19 @@ public class PostgreSqlDialect extends JdbcDialect {
     @Override
     public String getDriver() {
         return "org.postgresql.Driver";
+    }
+
+    @Override
+    public boolean invalidateItemCanOutputToSelf(){
+        return true;
+    }
+
+    @Override
+    public String getErrorDataScript(Map<String, String> configMap) {
+        String errorDataFileName = configMap.get("error_data_file_name");
+        if (StringUtils.isNotEmpty(errorDataFileName)) {
+            return "select * from " + errorDataFileName;
+        }
+        return null;
     }
 }
