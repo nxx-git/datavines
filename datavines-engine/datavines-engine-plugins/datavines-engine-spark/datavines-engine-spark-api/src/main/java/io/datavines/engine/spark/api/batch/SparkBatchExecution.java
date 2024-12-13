@@ -19,6 +19,7 @@ package io.datavines.engine.spark.api.batch;
 import io.datavines.engine.spark.api.BaseSparkSource;
 import io.datavines.engine.spark.api.BaseSparkTransform;
 import io.datavines.engine.spark.api.SparkRuntimeEnvironment;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
@@ -33,6 +34,7 @@ import static io.datavines.engine.api.EngineConstants.*;
 /**
  * SparkBatchExecution
  */
+@Slf4j
 public class SparkBatchExecution implements Execution<SparkBatchSource, BaseSparkTransform, SparkBatchSink> {
 
     private final SparkRuntimeEnvironment environment;
@@ -48,18 +50,24 @@ public class SparkBatchExecution implements Execution<SparkBatchSource, BaseSpar
 
     @Override
     public void execute(List<SparkBatchSource> sources, List<BaseSparkTransform> transforms, List<SparkBatchSink> sinks) {
+        log.info("start source");
         sources.forEach(s -> {
-                registerInputTempView(s, environment);
+            registerInputTempView(s, environment);
         });
 
+        log.info("start transform");
         if (!sources.isEmpty()) {
             Dataset<Row> ds = sources.get(0).getData(environment);
-            for (BaseSparkTransform tf:transforms) {
+            for (BaseSparkTransform tf : transforms) {
                 ds = transformProcess(environment, tf, ds);
                 registerTransformTempView(tf, ds);
             }
 
-            for (SparkBatchSink sink: sinks) {
+            log.info("start sink");
+            int i = 0;
+            for (SparkBatchSink sink : sinks) {
+                i++;
+                log.info("cur sink {}/{} conf: {}", i, sinks.size(), sink.getConfig().configMap().toString());
                 sinkProcess(environment, sink, ds);
             }
         }
@@ -87,10 +95,10 @@ public class SparkBatchExecution implements Execution<SparkBatchSource, BaseSpar
         if (config.has(INPUT_TABLE)) {
             String[] tableNames = config.getString(INPUT_TABLE).split(",");
 
-            for (String sourceTableName: tableNames) {
+            for (String sourceTableName : tableNames) {
                 fromDs = environment.sparkSession().read().table(sourceTableName);
 
-                if(resultDs == null) {
+                if (resultDs == null) {
                     resultDs = fromDs;
                 } else {
                     resultDs = resultDs.union(fromDs);

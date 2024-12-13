@@ -50,8 +50,8 @@ public class OracleDialect extends JdbcDialect{
     }
 
     @Override
-    public String getCreateTableAsSelectStatement(String srcTable, String targetDatabase, String targetTable) {
-        return String.format("CREATE TABLE %s.%s AS SELECT * FROM %s", quoteIdentifier(targetDatabase), quoteIdentifier(targetTable), quoteIdentifier(srcTable));
+    public String getCreateTableAsSelectStatement(String srcTable, String targetTable) {
+        return String.format("CREATE TABLE %s AS SELECT * FROM %s", quoteIdentifier(targetTable), quoteIdentifier(srcTable));
     }
 
     @Override

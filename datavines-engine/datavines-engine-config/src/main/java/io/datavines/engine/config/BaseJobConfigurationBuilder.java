@@ -32,6 +32,7 @@ import io.datavines.metric.api.ExpectedValue;
 import io.datavines.metric.api.SqlMetric;
 import io.datavines.spi.PluginLoader;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -43,6 +44,7 @@ import java.util.Map;
 import static io.datavines.common.ConfigConstants.*;
 import static io.datavines.engine.config.MetricParserUtils.generateUniqueCode;
 
+@Slf4j
 public abstract class BaseJobConfigurationBuilder implements JobConfigurationBuilder {
 
     protected final DataVinesJobConfig configuration = new DataVinesJobConfig();
@@ -116,6 +118,7 @@ public abstract class BaseJobConfigurationBuilder implements JobConfigurationBui
                 metricInputParameter.put(INVALIDATE_ITEM_CAN_OUTPUT, String.valueOf(true));
                 metricInputParameter.put(ENGINE_TYPE, jobExecutionInfo.getEngineType());
                 metric2InputParameter.put(metricUniqueKey, metricInputParameter);
+                // log.info("make metric2InputParameter: {}", JSONUtils.toJsonString(metric2InputParameter));
             }
         }
     }
@@ -229,11 +232,13 @@ public abstract class BaseJobConfigurationBuilder implements JobConfigurationBui
     }
 
     protected SinkConfig getValidateResultDataSinkConfig(ExpectedValue expectedValue, String sql, String dbTable, Map<String, String> inputParameter) throws DataVinesException {
-
+        String afterSql = ParameterUtils.convertParameterPlaceholders(sql, inputParameter);
+        log.info("pre sql = {}", sql);
+        log.info("replace holder = {}", JSONUtils.toJsonString(inputParameter));
+        log.info("after sql = {}", afterSql);
         SinkConfig validateResultDataStorageConfig = new SinkConfig();
         validateResultDataStorageConfig.setPlugin(jobExecutionInfo.getValidateResultDataStorageType());
-        Map<String, Object> configMap = getValidateResultSourceConfigMap(
-                ParameterUtils.convertParameterPlaceholders(sql, inputParameter),dbTable);
+        Map<String, Object> configMap = getValidateResultSourceConfigMap(afterSql, dbTable);
         configMap.put(JOB_EXECUTION_ID, jobExecutionInfo.getId());
         configMap.put(INVALIDATE_ITEMS_TABLE, inputParameter.get(INVALIDATE_ITEMS_TABLE));
         configMap.put(METRIC_UNIQUE_KEY, inputParameter.get(METRIC_UNIQUE_KEY));

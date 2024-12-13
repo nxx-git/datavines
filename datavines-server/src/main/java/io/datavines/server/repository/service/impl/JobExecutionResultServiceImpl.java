@@ -163,6 +163,10 @@ public class JobExecutionResultServiceImpl extends ServiceImpl<JobExecutionResul
                                 .forEach(config -> {
                                     paramMap.put(config.getValue().getLabel(!LanguageUtils.isZhContext()), jobParameter.getMetricParameter().get(config.getKey()));
                                 });
+                        paramMap.put(ACTUAL_VALUE, String.valueOf(jobExecutionResult.getActualValue()));
+                        paramMap.put(DATABASE, jobExecutionResult.getDatabaseName());
+                        paramMap.put(TABLE, jobExecutionResult.getTableName());
+                        paramMap.put(COLUMN, jobExecutionResult.getColumnName());
                         jobExecutionResultVO.setMetricParameter(paramMap);
                     }
                 }

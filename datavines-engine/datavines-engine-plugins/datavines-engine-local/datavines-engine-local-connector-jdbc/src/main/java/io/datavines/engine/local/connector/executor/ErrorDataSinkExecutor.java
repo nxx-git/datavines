@@ -88,6 +88,7 @@ public class ErrorDataSinkExecutor extends BaseDataSinkExecutor {
         String sourceTable = config.getString(INVALIDATE_ITEMS_TABLE);
         String targetDatabase = config.getString(ERROR_DATA_OUTPUT_TO_DATASOURCE_DATABASE);
         String targetTable = config.getString(ERROR_DATA_FILE_NAME);
+        String targetSchema = config.getString(SCHEMA);
 
         Statement sourceConnectionStatement = null;
         ResultSet countResultSet = null;
@@ -108,18 +109,20 @@ public class ErrorDataSinkExecutor extends BaseDataSinkExecutor {
             boolean isEnableUseView = config.getBoolean(ENABLE_USE_VIEW);
             ConnectorFactory connectorFactory = PluginLoader.getPluginLoader(ConnectorFactory.class).getOrCreatePlugin(srcConnectorType);
             Dialect dialect = connectorFactory.getDialect();
+            String fullTableName = dialect.getFullQualifiedTableName(targetDatabase, targetSchema, targetTable, true);
+
             if (!checkTableExist(getConnectionHolder().getConnection(),
-                    dialect.quoteIdentifier(targetDatabase)+"."+dialect.quoteIdentifier(targetTable), dialect)) {
+                    fullTableName, dialect)) {
                 if (isEnableUseView) {
-                    sourceConnectionStatement.execute(dialect.getCreateTableAsSelectStatement(sourceTable, targetDatabase, targetTable));
+                    sourceConnectionStatement.execute(dialect.getCreateTableAsSelectStatement(sourceTable, fullTableName));
                 } else {
-                    sourceConnectionStatement.execute(dialect.getCreateTableAsSelectStatementFromSql(sourceTable, targetDatabase, targetTable));
+                    sourceConnectionStatement.execute(dialect.getCreateTableAsSelectStatementFromSql(sourceTable, fullTableName));
                 }
             } else {
                 if (isEnableUseView) {
-                    sourceConnectionStatement.execute(dialect.getInsertAsSelectStatement(sourceTable, targetDatabase, targetTable));
+                    sourceConnectionStatement.execute(dialect.getInsertAsSelectStatement(sourceTable, fullTableName));
                 } else {
-                    sourceConnectionStatement.execute(dialect.getInsertAsSelectStatementFromSql(sourceTable, targetDatabase, targetTable));
+                    sourceConnectionStatement.execute(dialect.getInsertAsSelectStatementFromSql(sourceTable, fullTableName));
                 }
             }
 

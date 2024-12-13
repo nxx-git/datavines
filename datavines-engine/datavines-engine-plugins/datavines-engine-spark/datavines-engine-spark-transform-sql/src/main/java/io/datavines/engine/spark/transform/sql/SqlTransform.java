@@ -59,6 +59,7 @@ public class SqlTransform implements BaseSparkTransform {
 
     @Override
     public Dataset<Row> process(Dataset<Row> data, SparkRuntimeEnvironment env) {
+        System.out.println("aaaaaa: exec trans sql:" + config.getString(SQL));
         return env.sparkSession().sql(config.getString(SQL));
     }
 }

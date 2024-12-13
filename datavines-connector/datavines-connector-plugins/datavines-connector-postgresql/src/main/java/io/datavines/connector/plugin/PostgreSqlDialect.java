@@ -52,4 +52,19 @@ public class PostgreSqlDialect extends JdbcDialect {
         }
         return null;
     }
+
+    @Override
+    public String getFullQualifiedTableName(String database, String schema, String table, boolean needQuote) {
+        if (needQuote) {
+            table = quoteIdentifier(table);
+            if (!StringUtils.isEmptyOrNullStr(schema)) {
+                table = quoteIdentifier(schema) + "." + table;
+            }
+        } else {
+            if (!StringUtils.isEmptyOrNullStr(schema)) {
+                table = schema + "." + table;
+            }
+        }
+        return table;
+    }
 }

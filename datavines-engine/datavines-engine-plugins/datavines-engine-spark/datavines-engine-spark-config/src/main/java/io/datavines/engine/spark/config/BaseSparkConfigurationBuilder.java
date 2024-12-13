@@ -91,6 +91,7 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
         if (CollectionUtils.isNotEmpty(metricJobParameterList)) {
             Set<String> sourceConnectorSet = new HashSet<>();
             Set<String> targetConnectorSet = new HashSet<>();
+            log.info("getSourceConfigs nums: {}", metricJobParameterList.size());
             for (BaseJobParameter parameter : metricJobParameterList) {
                 String metricUniqueKey = getMetricUniqueKey(parameter);
                 Map<String, String> metricInputParameter = metric2InputParameter.get(metricUniqueKey);
@@ -137,15 +138,13 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
 
                     String connectorUUID = connectorFactory.getConnectorParameterConverter().getConnectorUUID(connectorParameterMap);
 
-                    if (sourceConnectorSet.contains(connectorUUID)) {
-                        continue;
+                    if (!sourceConnectorSet.contains(connectorUUID)) {
+                        sourceConfig.setPlugin(connectorFactory.getCategory());
+                        sourceConfig.setConfig(connectorParameterMap);
+                        sourceConfig.setType(SourceType.SOURCE.getDescription());
+                        sourceConfigs.add(sourceConfig);
+                        sourceConnectorSet.add(connectorUUID);
                     }
-
-                    sourceConfig.setPlugin(connectorFactory.getCategory());
-                    sourceConfig.setConfig(connectorParameterMap);
-                    sourceConfig.setType(SourceType.SOURCE.getDescription());
-                    sourceConfigs.add(sourceConfig);
-                    sourceConnectorSet.add(connectorUUID);
                 }
 
                 if (jobExecutionParameter.getConnectorParameter2() != null
@@ -181,15 +180,13 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
                     metricInputParameter.put(TABLE2_ALIAS, tableAlias2);
 
                     String connectorUUID = connectorFactory.getConnectorParameterConverter().getConnectorUUID(connectorParameterMap);
-                    if (targetConnectorSet.contains(connectorUUID)) {
-                        continue;
+                    if (!targetConnectorSet.contains(connectorUUID)) {
+                        sourceConfig.setPlugin(connectorFactory.getCategory());
+                        sourceConfig.setConfig(connectorParameterMap);
+                        sourceConfig.setType(SourceType.TARGET.getDescription());
+                        sourceConfigs.add(sourceConfig);
+                        targetConnectorSet.add(connectorUUID);;
                     }
-
-                    sourceConfig.setPlugin(connectorFactory.getCategory());
-                    sourceConfig.setConfig(connectorParameterMap);
-                    sourceConfig.setType(SourceType.TARGET.getDescription());
-                    sourceConfigs.add(sourceConfig);
-                    targetConnectorSet.add(connectorUUID);
                 }
 
                 metricInputParameter.put("actual_value", "actual_value_" + metricUniqueKey);
@@ -204,8 +201,8 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
                     sourceConfigs.add(getValidateResultDataSourceConfig());
                     isAddValidateResultDataSource = true;
                 }
-
                 metric2InputParameter.put(metricUniqueKey, metricInputParameter);
+                log.info("getSourceConfigs make parameter: {}", JSONUtils.toJsonString(metricUniqueKey));
             }
         }
 
@@ -233,13 +230,14 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
             if (connectorParameterMap.get(ERROR_DATA_OUTPUT_TO_DATASOURCE_DATABASE) == null) {
                 connectorParameterMap = connectorFactory.getConnectorParameterConverter().converter(connectorParameterMap);
             } else {
-                List<SourceConfig> sourceConfigs = getSourceConfigs()
+
+                List<SourceConfig> sourceConfigs = configuration.getSourceParameters()
                         .stream().filter(x->SourceType.SOURCE.getDescription().equalsIgnoreCase(x.getType())).collect(Collectors.toList());
                 if (CollectionUtils.isEmpty(sourceConfigs)) {
                     return null;
                 }
 
-                connectorParameterMap = sourceConfigs.get(0).getConfig();
+                connectorParameterMap = new HashMap<>(sourceConfigs.get(0).getConfig());
                 connectorParameterMap.put(DATABASE, errorDataOutputToDataSourceDatabase);
             }
 

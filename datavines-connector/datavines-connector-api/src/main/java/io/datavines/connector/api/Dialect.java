@@ -41,7 +41,6 @@ public interface Dialect {
     List<String> getExcludeDatabases();
 
     default String getFullQualifiedTableName(String database, String schema, String table, boolean needQuote) {
-
         if (needQuote) {
             table = quoteIdentifier(table);
 
@@ -107,12 +106,12 @@ public interface Dialect {
         return String.format("SELECT * FROM %s", table);
     }
 
-    default String getCreateTableAsSelectStatement(String srcTable, String targetDatabase, String targetTable) {
-        return String.format("CREATE TABLE %s.%s AS SELECT * FROM %s", quoteIdentifier(targetDatabase), quoteIdentifier(targetTable), quoteIdentifier(srcTable));
+    default String getCreateTableAsSelectStatement(String srcTable, String targetFullTable) {
+        return String.format("CREATE TABLE %s AS SELECT * FROM %s", quoteIdentifier(targetFullTable), quoteIdentifier(srcTable));
     }
 
-    default String getCreateTableAsSelectStatementFromSql(String srcTable, String targetDatabase, String targetTable) {
-        return String.format("CREATE TABLE %s.%s AS SELECT t.* FROM %s", quoteIdentifier(targetDatabase), quoteIdentifier(targetTable), srcTable);
+    default String getCreateTableAsSelectStatementFromSql(String srcTable, String targetFullTable) {
+        return String.format("CREATE TABLE %s AS SELECT t.* FROM %s", quoteIdentifier(targetFullTable), srcTable);
     }
 
     default String getCreateTableStatement(String table, List<StructField> fields, TypeConverter typeConverter) {
@@ -127,12 +126,12 @@ public interface Dialect {
         return "";
     }
 
-    default String getInsertAsSelectStatement(String srcTable, String targetDatabase, String targetTable) {
-        return String.format("INSERT INTO %s.%s SELECT * FROM %s", quoteIdentifier(targetDatabase), quoteIdentifier(targetTable), quoteIdentifier(srcTable));
+    default String getInsertAsSelectStatement(String srcTable, String targetFullTable) {
+        return String.format("INSERT INTO %s SELECT * FROM %s", targetFullTable, quoteIdentifier(srcTable));
     }
 
-    default String getInsertAsSelectStatementFromSql(String srcTable, String targetDatabase, String targetTable) {
-        return String.format("INSERT INTO %s.%s SELECT t.* FROM %s", quoteIdentifier(targetDatabase), quoteIdentifier(targetTable), srcTable);
+    default String getInsertAsSelectStatementFromSql(String srcTable, String targetFullTable) {
+        return String.format("INSERT INTO %s SELECT t.* FROM %s", targetFullTable, srcTable);
     }
 
     String getErrorDataScript(Map<String, String> configMap);

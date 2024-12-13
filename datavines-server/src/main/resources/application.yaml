@@ -21,10 +21,10 @@ spring:
   application:
     name: datavines-server
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.11.157:36001/datavines
-    username: citus
-    password: sa
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.11.155:3306/datavines?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: sa.mapgis
     hikari:
       connection-test-query: select 1
       minimum-idle: 5

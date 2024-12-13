@@ -101,6 +101,7 @@ public class JdbcSource implements SparkBatchSource {
         }
 
         DataFrameReader reader = new DataFrameReader(env.sparkSession());
+        System.out.println("aaaaaaaaaaaaaaaa: " + config.configMap().toString());
         return reader.jdbc(config.getString(URL), config.getString(TABLE),properties);
     }
 
