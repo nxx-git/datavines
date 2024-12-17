@@ -59,6 +59,8 @@
         <module>datavines-metric-column-avg-length</module>
         <module>datavines-metric-column-std-dev</module>
         <module>datavines-metric-column-distinct</module>
+        <module>datavines-metric-column-gis-srid</module>
+        <module>datavines-metric-column-gis-area</module>
     </modules>
 
     <dependencies>
